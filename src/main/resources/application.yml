@@ -1,0 +1,65 @@
+#spring.application.name=partner
+#spring.docker.compose.file=C:\\dev\\java\\partner\\docker\\docker-compose.yml
+#spring.datasource.url=jdbc:postgresql://localhost:5432/partner
+
+spring:
+  config:
+    import:
+      - optional:classpath:.env[.properties]
+      - optional:file:.env[.properties]
+
+  # -- DB ----------------------------
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  # -- Docker ----------------------------
+  docker:
+    compose:
+      enabled: true
+      lifecycle-management: none
+      file: 'C:\\dev\\java\\partner\\docker-compose.yml'
+
+
+  # -- DB Migration ----------------------------
+  flyway:
+    locations:
+      - classpath:db/migration
+    enabled: true
+    baseline-on-migrate: true
+
+
+  # ---------------- Security ------------------
+
+  security:
+    allowed-origins: ${ALLOWED_ORIGINS:http://localhost:8080}
+    cookie:
+      secure: false
+      http-only: false
+      max-age: 180
+    jwt:
+      secret-key: ${JWT_SECRET_KEY}
+      expiration: ${JWT_EXPIRATION:3600000}
+      refresh-token:
+        expiration: 36000000
+#    oauth2:
+#      authorization-success-url: ${OAUTH2_SUCCESS_URL:http://localhost:8080}
+#      client:
+#        registration:
+#          google:
+#            client-id: ${GOOGLE_OAUTH2_CLIENT_ID}
+#            client-secret: ${GOOGLE_OAUTH2_SECRET}
+#            scope:
+#              - email
+#              - profile
+#
